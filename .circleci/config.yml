@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    working_directory: /dockerapp-rb
+    working_directory: /dockerapp
     docker:
       - image: docker:17.05.0-ce-git
     steps:
@@ -17,3 +17,12 @@ jobs:
           command: |
             docker-compose up -d
             docker-compose run dockerapp bundle exec ruby ./test.rb
+      - deploy:
+          name: Publish application Docker image
+          command: |
+            docker login -e $DOCKERHUB_EMAIL \
+            -u $DOCKERHUB_USER_ID \
+            -p $DOCKERHUB_PWD
+            docker tag dockerapp_dockerapp $DOCKERHUB_USER_ID/dockerapp-rb:$CIRCLE_SHA1
+            docker tag dockerapp_dockerapp $DOCKERHUB_USER_ID/dockerapp-rb:latest
+            docker push $DOCKERHUB_USER_ID/dockerapp-rb:$CIRCLE_SHA1
