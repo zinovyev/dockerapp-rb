@@ -3,8 +3,12 @@ services:
   dockerapp:
     image: zinovyev/dockerapp-rb
     ports:
-      - '4567:4567'
+      - '4000:4567'
     depends_on:
       - redis
+    deploy:
+      replicas: 2
   redis:
     image: 'redis:3.2'
+    deploy:
+      replicas: 2
